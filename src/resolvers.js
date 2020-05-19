@@ -1,6 +1,7 @@
 import { QUERY_CART_INFO } from './components/UserCart'
 import { QUERY_AVAILABLE_ITEMS } from './components/ItemsForPurchase'
 import { convertPrice } from './util'
+import { gql } from '@apollo/client'
 
 export const resolvers = {
   Mutation: {
@@ -24,27 +25,43 @@ export const resolvers = {
 
       return newItem
     },
-    async convertCurrency(_, { newCurrency }, { cache }) {
-      const { currency, cart: { total } } = cache.readQuery({ query: QUERY_CART_INFO })
+    async convertCurrency (_, { newCurrency }, { cache }) {
+      const {
+        currency,
+        cart: { items, total }
+      } = cache.readQuery({ query: QUERY_CART_INFO })
 
       const { itemsForSale } = cache.readQuery({ query: QUERY_AVAILABLE_ITEMS })
 
       const itemsWithConvertedPricing = await Promise.all(
-        itemsForSale.map(async (item) => ({
-          ...item,
-          price: await convertPrice(currency, newCurrency, item.price)
-        })))
+        itemsForSale.map(async item => ({
+          ...item
+          // price: await convertPrice(currency, newCurrency, item.price)
+        }))
+      )
 
-      cache.writeData({
+      cache.writeQuery({
+        query: gql`
+          query {
+            cart {
+              items
+              total
+            }
+            currency
+            itemsForSale
+          }
+        `,
         data: {
           itemsForSale: itemsWithConvertedPricing,
           cart: {
+            items,
             total: await convertPrice(currency, newCurrency, total),
             __typename: 'Cart'
           },
           currency: newCurrency
         }
       })
+      console.log('worked')
 
       return newCurrency
     }

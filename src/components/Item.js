@@ -1,10 +1,8 @@
 import React from 'react'
-import { Image, Card, Button } from 'semantic-ui-react'
-import { gql } from 'apollo-boost'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery, gql } from '@apollo/client'
 
 const MUTATION_ADD_ITEM_TO_CART = gql`
-  mutation ($id: String!) {
+  mutation($id: String!) {
     addItemToCart(id: $id) @client
   }
 `
@@ -16,27 +14,28 @@ const QUERY_CURRENT_CURRENCY = gql`
 `
 
 // render an item with some styling
-export function Item(props) {
-  const [ addItemToCart ] = useMutation(
-    MUTATION_ADD_ITEM_TO_CART,
-    { variables: { id: props.id } }
-  )
+export function Item (props) {
+  const [addItemToCart] = useMutation(MUTATION_ADD_ITEM_TO_CART, {
+    variables: { id: props.id }
+  })
   const { data } = useQuery(QUERY_CURRENT_CURRENCY)
 
   return (
-    <Card size='small'>
-      <Image src={props.thumbnail_url} style={{ height: 125, objectFit: 'cover' }}/>
-      <Card.Content>
-        <Card.Header>
-          {props.title}
-        </Card.Header>
-        <Card.Meta>
-          {data.currency === 'EUR' ? '€' : '$'} {props.price.toFixed(2)}
-        </Card.Meta>
-      </Card.Content>
-      <Card.Content as={Button} onClick={addItemToCart}>
-        Add to Cart
-      </Card.Content>
-    </Card>
+    <>
+      <img
+        src={props.thumbnail_url}
+        style={{ height: 125, objectFit: 'cover' }}
+      />
+
+      <div className='block pt-4 pb-2'>
+        <h2 className='pr-1 inline'>{props.title}</h2>
+        <span className=''>
+          {data.currency === 'EUR' ? '€' : '$'}
+          {props.price.toFixed(2)}
+        </span>
+      </div>
+
+      <button className='block p-2 hover:bg-gray-400 bg-gray-200 align-middle text-center' onClick={addItemToCart}>Add to Cart</button>
+    </>
   )
 }

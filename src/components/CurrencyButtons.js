@@ -1,32 +1,29 @@
 import React from 'react'
-import { Button } from 'semantic-ui-react'
-import { gql } from 'apollo-boost'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, gql } from '@apollo/client'
 
-const MUTATION_CONVERT_CURRENCY = gql`
-  mutation ($newCurrency: String!) {
+export const MUTATION_CONVERT_CURRENCY = gql`
+  mutation($newCurrency: String!) {
     convertCurrency(newCurrency: $newCurrency) @client
   }
 `
 
-export function CurrencyButtons(props) {
-
-  const [ convertCurrency ] = useMutation(MUTATION_CONVERT_CURRENCY)
+export function CurrencyButtons (props) {
+  const [convertCurrency] = useMutation(MUTATION_CONVERT_CURRENCY)
 
   return (
-    <Button.Group fluid>
-      <Button
-        content='USD'
-        icon='usd'
-        positive={props.currency === 'USD'}
+    <>
+    <div className="flex">
+      <button
+      className={'px-6 py-2 hover:bg-green-200 ' + (props.currency === 'USD' ? 'bg-green-200' : '')}
+        value={props.currency === 'USD'}
         onClick={() => convertCurrency({ variables: { newCurrency: 'USD' } })}
-      />
-      <Button
-        content='EUR'
-        icon='euro'
-        positive={props.currency === 'EUR'}
+      >USD</button>
+      <button
+      className={'px-6 py-2 hover:bg-green-200 ml-2 ' + (props.currency === 'EUR' ? 'bg-green-200' : '')}
+        value={props.currency === 'EUR'}
         onClick={() => convertCurrency({ variables: { newCurrency: 'EUR' } })}
-      />
-    </Button.Group>
+      >EUR</button>
+      </div>
+    </>
   )
 }

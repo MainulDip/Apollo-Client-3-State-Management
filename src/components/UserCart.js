@@ -1,7 +1,5 @@
 import React from 'react'
-import { Segment, Divider } from 'semantic-ui-react'
-import { gql } from 'apollo-boost'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, gql } from '@apollo/client'
 //
 import { CurrencyButtons } from './CurrencyButtons'
 
@@ -20,17 +18,36 @@ export const QUERY_CART_INFO = gql`
   }
 `
 
-export function UserCart() {
-
+export function UserCart () {
   const { data } = useQuery(QUERY_CART_INFO)
+  console.log(data)
 
   return (
-    <Segment>
-      <h1>My Cart</h1>
-      <Divider />
-      { data.cart.items.map(item => <p key={item.id}>{item.title}</p>) }
-      <h4>Total: { data.currency === 'USD' ? '$' : '€'} { data.cart.total.toFixed(2) } </h4>
-      <CurrencyButtons currency={data.currency} />
-    </Segment>
+    <>
+      <h1 className='text-center py-2 bg-gray-200'>Your Cart</h1>
+      <div
+        className='py-2 px-6 border-gray-200 border-b-2 relative'
+        style={{ minHeight: '90px' }}
+      >
+        {data && data.cart.items == 0 && (
+          <div
+            className='flex justify-center items-center absolute'
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <p>Your Cart Is Empty!</p>
+          </div>
+        )}
+        {data && data.cart.items.map((item, index) => <p key={index}>{item.title}</p>)}
+      </div>
+      <div className='py-2 px-6'>
+        Total: {data && data.currency === 'USD' ? '$' : '€'}{' '}
+        {data && data.cart.total.toFixed(2)}{' '}
+      </div>
+      <CurrencyButtons currency={data && data.currency} />
+    </>
   )
 }
