@@ -1,11 +1,18 @@
 import React from 'react'
 import { useQuery, gql } from '@apollo/client'
-//
+import Counter from './Counter'
 import { CurrencyButtons } from './CurrencyButtons'
 
 export const QUERY_CART_INFO = gql`
   query {
     cart @client {
+      items_counter {
+        id
+        title
+        thumbnail_url
+        price
+        counter
+      }
       items {
         id
         title
@@ -20,7 +27,7 @@ export const QUERY_CART_INFO = gql`
 
 export function UserCart () {
   const { data } = useQuery(QUERY_CART_INFO)
-  console.log(data)
+  // console.log(data)
 
   return (
     <>
@@ -41,7 +48,8 @@ export function UserCart () {
             <p>Your Cart Is Empty!</p>
           </div>
         )}
-        {data && data.cart.items.map((item, index) => <p key={index}>{item.title}</p>)}
+        {data &&
+          data.cart.items_counter.map((item, index) => <Counter key={index} {...item}/>)}
       </div>
       <div className='py-2 px-6'>
         Total: {data && data.currency === 'USD' ? '$' : '€'}{' '}

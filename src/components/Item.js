@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMutation, useQuery, gql } from '@apollo/client'
 
-const MUTATION_ADD_ITEM_TO_CART = gql`
+export const MUTATION_ADD_ITEM_TO_CART = gql`
   mutation($id: String!) {
     addItemToCart(id: $id) @client
   }

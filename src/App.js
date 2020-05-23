@@ -20,10 +20,44 @@ const client = new ApolloClient({
   resolvers: resolvers
 })
 
+// cache.writeQuery({
+//   query: gql`
+//     query {
+//       cart {
+//         items
+//         total
+//       }
+//       currency
+//       itemsForSale {
+//         id
+//         title
+//         thumbnail_url
+//         price
+//       }
+//     }
+//   `,
+//   data: {
+//     cart: {
+//       items: [],
+//       total: 0,
+//       __typename: 'Cart'
+//     },
+//     currency: 'USD',
+//     itemsForSale: available_items
+//   }
+// })
+
 cache.writeQuery({
   query: gql`
     query {
       cart {
+        items_counter {
+          id
+          title
+          thumbnail_url
+          price
+          counter
+        }
         items
         total
       }
@@ -38,6 +72,7 @@ cache.writeQuery({
   `,
   data: {
     cart: {
+      items_counter: [],
       items: [],
       total: 0,
       __typename: 'Cart'
@@ -47,25 +82,25 @@ cache.writeQuery({
   }
 })
 
-async function setupPersistence () {
-  try {
-    await persistCache({
-      cache: cache,
-      storage: window.localStorage
-    })
-  } catch (err) {
-    console.log(err)
-  }
-}
+// async function setupPersistence () {
+//   try {
+//     await persistCache({
+//       cache: cache,
+//       storage: window.localStorage
+//     })
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
 
 export function App () {
-  const [hydrated, setHydrated] = useState(false)
+  // const [hydrated, setHydrated] = useState(false)
 
-  useEffect(() => {
-    setupPersistence().finally(() => setHydrated(true))
-  }, [])
+  // useEffect(() => {
+  //   setupPersistence().finally(() => setHydrated(true))
+  // }, [])
 
-  if (!hydrated) return <p>loading our persisted cache...</p>
+  // if (!hydrated) return <p>loading our persisted cache...</p>
 
   return (
     <ApolloProvider client={client}>
@@ -75,7 +110,9 @@ export function App () {
         </h2>
         <div className='flex  m-4'>
           <div className='w-3/4 mr-4'>
-          <h1 className='p-4 bg-green-200 inline-block mt-2 mb-4 ml-2'>Shop Now</h1>
+            <h1 className='p-4 bg-green-200 inline-block mt-2 mb-4 ml-2'>
+              Shop Now
+            </h1>
             <ItemsForPurchase /> {/* component */}
           </div>
           <div className='w-1/4 flex flex-col self-start shadow-xs'>

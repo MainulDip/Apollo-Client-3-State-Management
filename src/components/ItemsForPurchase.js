@@ -17,7 +17,7 @@ export const QUERY_AVAILABLE_ITEMS = gql`
 // render all items available in our demo store
 export function ItemsForPurchase () {
   const { data } = useQuery(QUERY_AVAILABLE_ITEMS)
-  console.log(data.itemsForSale)
+  // console.log(data.itemsForSale)
   return (
     <>
       <div className='flex flex-wrap'>
