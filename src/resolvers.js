@@ -29,11 +29,12 @@ export const resolvers = {
             }).length
           ) {
             // remove old object using filter then concat
-            return cart.items_counter
-              .filter(item => {
-                return item.id != newItemWithCounters.id
-              })
-              .concat(newItemWithCounters)
+            let itemIndex = cart.items_counter.findIndex(
+              item => item.id == newItemWithCounters.id
+            )
+            let new_items_counters = [...cart.items_counter]
+            new_items_counters.splice(itemIndex, 1, newItemWithCounters)
+            return new_items_counters
           } else {
             return cart.items_counter.concat(newItemWithCounters)
           }
@@ -79,21 +80,21 @@ export const resolvers = {
             ...toremovefromcounter,
             counter: toremovefromcounter.counter - 1
           }
-          return removeFromItemArray(cart.items_counter, newObj, true);
+          return removeFromItemArray(cart.items_counter, newObj, true)
         }
       }
 
       const removeFromItemArray = (array, object, counter = false) => {
-        if(counter){
+        if (counter) {
           let itemIndex = array.findIndex(item => item.id == args.id)
           let newArray = [...array]
           newArray.splice(itemIndex, 1, object)
           return newArray
         } else {
-        let itemIndex = array.findIndex(item => item.id == args.id)
-        let newArray = [...array].reverse()
-        newArray.splice(itemIndex, 1)
-        return newArray
+          let itemIndex = array.findIndex(item => item.id == args.id)
+          let newArray = [...array].reverse()
+          newArray.splice(itemIndex, 1)
+          return newArray
         }
       }
 
