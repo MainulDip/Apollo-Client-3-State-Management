@@ -82,25 +82,25 @@ cache.writeQuery({
   }
 })
 
-// async function setupPersistence () {
-//   try {
-//     await persistCache({
-//       cache: cache,
-//       storage: window.localStorage
-//     })
-//   } catch (err) {
-//     console.log(err)
-//   }
-// }
+async function setupPersistence () {
+  try {
+    await persistCache({
+      cache: cache,
+      storage: window.localStorage
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 
 export function App () {
-  // const [hydrated, setHydrated] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
 
-  // useEffect(() => {
-  //   setupPersistence().finally(() => setHydrated(true))
-  // }, [])
+  useEffect(() => {
+    setupPersistence().finally(() => setHydrated(true))
+  }, [])
 
-  // if (!hydrated) return <p>loading our persisted cache...</p>
+  if (!hydrated) return <p>loading our persisted cache...</p>
 
   return (
     <ApolloProvider client={client}>
